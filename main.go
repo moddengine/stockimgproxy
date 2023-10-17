@@ -36,7 +36,7 @@ func processError(err error) {
 
 func loadConfig(cfg *Config) {
 
-	f, err := os.Open("conf/config-dist.json")
+	f, err := os.Open("conf/config.json")
 	if err != nil {
 		processError(err)
 	}
