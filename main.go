@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"github.com/andybalholm/brotli"
 	"io"
 	"log"
 	"net/http"
@@ -157,18 +158,21 @@ func main() {
 				results[(res.Start+idx)*len(apis)+res.Num] = item
 			}
 		}
+		body := brotli.HTTPCompressor(w, r)
+		defer body.Close()
 		if ok == 0 {
 			w.WriteHeader(http.StatusServiceUnavailable)
-			log.Println(w, "Error connecting to upstream services")
+			log.Println(body, "Error connecting to upstream services")
 			return
 		}
-		enc := json.NewEncoder(w)
+		enc := json.NewEncoder(body)
 		indent := ""
 		if cfg.Debug.PrettyJson {
 			indent = "  "
 		}
 		enc.SetIndent("", indent)
 		enc.Encode(results)
+
 	})
 	log.Println("Starting Server on :8081")
 	log.Fatal(http.ListenAndServe(":8081", nil))
