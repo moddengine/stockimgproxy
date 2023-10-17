@@ -29,7 +29,7 @@ type UnsplashUser struct {
 type UnsplashPhotoLinks struct {
 	Self     string `json:"self"`
 	Html     string `json:"html"`
-	Download string `json:"download""`
+	Download string `json:"download"`
 }
 
 type UnsplashUserLinks struct {
