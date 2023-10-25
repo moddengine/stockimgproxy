@@ -185,6 +185,7 @@ func searchHandler(cfg *Config, apis []ImageSearcher) func(w http.ResponseWriter
 			log.Println(body, "Error connecting to upstream services")
 			return
 		}
+		w.Header().Set("Content-Type", "application/json")
 		enc := json.NewEncoder(body)
 		indent := ""
 		if cfg.Debug.PrettyJson {
