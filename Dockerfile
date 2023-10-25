@@ -1,7 +1,5 @@
 FROM debian:bookworm-slim as builder
 
-WORKDIR /proxy
-
 RUN set -xe; \
     apt update && \
     apt install -y build-essential git golang
@@ -18,5 +16,6 @@ RUN cd /build && \
     ls -la .
 
 FROM debian:bookworm-slim
+WORKDIR /proxy
 COPY --from=builder /build/main /usr/bin/stockimgproxy
 CMD /usr/bin/stockimgproxy
