@@ -16,6 +16,10 @@ RUN cd /build && \
     ls -la .
 
 FROM debian:bookworm-slim
+RUN apt-get update &&  \
+    apt-get install -y ca-certificates &&  \
+    apt-get upgrade -y && \
+    apt-get clean
 WORKDIR /proxy
 COPY --from=builder /build/main /usr/bin/stockimgproxy
 CMD /usr/bin/stockimgproxy
