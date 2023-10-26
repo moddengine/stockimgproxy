@@ -87,14 +87,17 @@ func initApi(cfg *Config, store *Store) []ImageSearcher {
 	if cfg.Pixabay.Key != "" {
 		apiPixabay := NewPixabayApi(cfg, reqCache)
 		apis = append(apis, &apiPixabay)
+		log.Println("Configured pixabay.com API Key")
 	}
 	if cfg.Pexels.Key != "" {
 		apiPexels := NewPexelsApi(cfg, reqCache)
 		apis = append(apis, &apiPexels)
+		log.Println("Configured pexels.com API Key")
 	}
 	if cfg.Unsplash.AccessKey != "" {
 		apiUnsplash := NewUnsplashApi(cfg, reqCache)
 		apis = append(apis, &apiUnsplash)
+		log.Println("Configured unsplash.com API Key")
 	}
 	return apis
 }
@@ -182,7 +185,7 @@ func searchHandler(cfg *Config, apis []ImageSearcher) func(w http.ResponseWriter
 		defer body.Close()
 		if ok == 0 {
 			w.WriteHeader(http.StatusServiceUnavailable)
-			log.Println(body, "Error connecting to upstream services")
+			log.Println("Error connecting to upstream services")
 			return
 		}
 		w.Header().Set("Content-Type", "application/json")
@@ -243,6 +246,10 @@ func main() {
 		sock, err := net.Listen("unix", "sock/fcgi.sock")
 		if err != nil {
 			log.Panicln("Unable to open socket", err.Error())
+		}
+		err = os.Chmod("sock/fcgi.sock", 0777)
+		if err != nil {
+			log.Panicln("Unable to set socket to globally writable", err.Error())
 		}
 		log.Println("Starting FastCGI Server on sock/fcgi.sock")
 		err = fcgi.Serve(sock, fcgid)
