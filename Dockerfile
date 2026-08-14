@@ -1,25 +1,18 @@
-FROM debian:bookworm-slim as builder
+FROM golang:1.26.6-bookworm AS builder
 
-RUN set -xe; \
-    apt update && \
-    apt install -y build-essential git golang
+WORKDIR /build
 
-COPY go.mod go.sum /build/
+COPY go.mod go.sum ./
+RUN go mod download
 
-RUN cd /build && \
-    go mod download
-
-COPY *.go /build/
-
-RUN cd /build && \
-    go build main && \
-    ls -la .
+COPY *.go ./
+RUN go build -trimpath -ldflags="-s -w" -o /out/stockimgproxy .
 
 FROM debian:bookworm-slim
-RUN apt-get update &&  \
-    apt-get install -y ca-certificates &&  \
+RUN apt-get update && \
     apt-get upgrade -y && \
-    apt-get clean
+    apt-get install -y --no-install-recommends ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
 WORKDIR /proxy
-COPY --from=builder /build/main /usr/bin/stockimgproxy
-CMD /usr/bin/stockimgproxy
+COPY --from=builder /out/stockimgproxy /usr/bin/stockimgproxy
+CMD ["/usr/bin/stockimgproxy"]
