@@ -6,7 +6,7 @@ require github.com/mattn/go-sqlite3 v1.14.49
 
 require (
 	github.com/alexedwards/argon2id v1.0.0
-	github.com/andybalholm/brotli v1.2.2
+	github.com/andybalholm/brotli v1.2.5
 	github.com/apibillme/cache v0.0.0-20180927200649-e0b3581c9b4d
 	github.com/stretchr/testify v1.11.1
 )
